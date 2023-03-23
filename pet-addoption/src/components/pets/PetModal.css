@@ -1,0 +1,8 @@
+.petmodal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  background-color: rgba(256, 256, 256, 0.5);
+  flex-direction: column;
+}

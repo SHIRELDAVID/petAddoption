@@ -1,0 +1,19 @@
+.petcard__container {
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px;
+    max-width: 500px;
+    margin: auto;
+    margin-top: 15px;
+}
+
+h2 {
+    margin-bottom: 5px;
+}
+
+.petcard__container button {
+    margin: 0 2px;
+    margin-bottom: 5px;
+    width: 9em !important;
+
+}

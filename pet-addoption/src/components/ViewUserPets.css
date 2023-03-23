@@ -1,0 +1,12 @@
+.viewpets {
+    background: white;
+    padding: 15px;
+    height: 450px;
+    width: 350px;
+    overflow: auto;
+}
+
+.viewpets .petcard__container {
+    background: #ff7cbb !important;
+    margin-bottom: 5px;
+}

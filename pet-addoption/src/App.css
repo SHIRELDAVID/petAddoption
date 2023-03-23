@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap');
+
+* {
+  font-family: 'Rubik', sans-serif;
+
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  background-color: rgb(255, 208, 216);
+  height: fit-content;
+  min-height: 100vh;
+}
+
+#modal {
+  position: absolute;
+  top: 0;
+}
