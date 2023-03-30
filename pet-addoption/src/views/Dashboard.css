@@ -10,6 +10,10 @@
 }
 
 
+.dasboard__content {
+  margin: 0 auto;
+}
+
 .dasboard__sidebar {
   height: 100%;
   width: 75px;
@@ -19,6 +23,8 @@
 
 .dasboard__content__container {
   display: flex;
+  margin: auto;
+
 }
 
 td button {
@@ -48,6 +54,8 @@ table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
+  background: white;
+  border-radius: 10px;
 }
 
 td,
@@ -58,5 +66,5 @@ th {
 }
 
 tr:nth-child(even) {
-  background-color: #dddddd;
+  background-color: #FF7CBB;
 }

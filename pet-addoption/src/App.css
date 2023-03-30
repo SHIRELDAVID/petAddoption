@@ -10,7 +10,6 @@
   flex-direction: column;
   text-align: center;
   background-color: rgb(255, 208, 216);
-  height: fit-content;
   min-height: 100vh;
 }
 

@@ -14,7 +14,7 @@ const {
 } = require("../controllers/User.controller");
 const authMiddleware = require("../middlewares/authMiddleware");
 const validationSchema = require("../middlewares/validationMiddleware");
-const { User } = require("../models/User.model");
+const User = require("../services/firebase")
 const router = express.Router();
 
 // Create user
@@ -24,7 +24,8 @@ router.get("/", async (req, res) => {
 
 router.post("/signup", validationSchema, async (req, res) => {
   const { name, email, lastname, password, role } = req.body;
-
+  const isExist = await getUserByEmail(email);
+  if (!isExist || isExist === []) return res.status(400).json({ message: "this email already exist. sign in" })
   const user = await createUser({ name, email, lastname, password, role });
 
   res.status(200).json(user);
@@ -34,20 +35,18 @@ router.post("/login", validationSchema, async (req, res) => {
   const { email, password } = req.body;
   const user = await getUserByEmail(email);
 
-  if (user[0].password == sha256(password)) {
+  if (user[0]?.password == sha256(password)) {
     //tokenize
-    const token = jwt.sign({ id: user[0]._id }, "secret123");
+    const token = jwt.sign({ id: user[0]._id, role: user[0].role }, "secret123");
     res.status(200).json({ token, user: user[0] });
   } else {
     res.status(400).json({ message: "Invalid email or password" });
   }
 });
 
-router.get("/getAll", authMiddleware, async (req, res) => {
-  if (req.user.role !== "2") { return res.status(401).json({ message: "Access denied." }) }
-  const users = await getUsers();
-
-  res.status(200).json(users);
+router.get("/getAll", async (req, res) => {
+  const users = await getUsers()
+  res.status(200).json(users)
 });
 
 router.get("/getById/:id", authMiddleware, async (req, res) => {
@@ -55,7 +54,7 @@ router.get("/getById/:id", authMiddleware, async (req, res) => {
 
   const user = await getUserById(id);
 
-  res.status(200).json(user);
+  res.status(200).json(user[0]);
 });
 
 router.put(

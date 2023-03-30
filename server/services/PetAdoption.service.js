@@ -1,26 +1,23 @@
-const {
-  addPetToUser,
-  removePetFromUser,
-} = require("../controllers/User.controller");
-const { updatePetStatus } = require("../controllers/Pet.controller");
-const { User } = require("../models/User.model");
+
 const { Pet } = require("../models/Pet.model");
+const { updateUser, getUserById } = require("../controllers/User.controller");
 
 const adoptPet = async ({ userId, petId }) => {
-  const user = await User.findById(userId)
-  await User.findByIdAndUpdate(userId, { pets: [...user.pets, petId] })
+  const user = await getUserById(userId)
+  console.log(user)
+  await updateUser({ _id: userId, pets: [...user[0].pets, petId] })
   await Pet.findByIdAndUpdate(petId, { status: "adopted" })
 };
 
 const fosterPet = async ({ userId, petId }) => {
-  const user = await User.findById(userId)
-  await User.findByIdAndUpdate(userId, { pets: [...user.pets, petId] })
+  const user = await getUserById(userId)
+  await updateUser({ _id: userId, pets: [...user[0].pets, petId] })
   await Pet.findByIdAndUpdate(petId, { status: "fostered" })
 };
 
 const returnPet = async ({ userId, petId }) => {
-  const user = await User.findById(userId)
-  await User.findByIdAndUpdate(userId, { pets: [...user.pets.filter(pet => pet !== petId)] })
+  const user = await getUserById(userId)
+  await updateUser({ _id: userId, pets: [...user[0].pets.filter(pet => pet !== petId)] })
   await Pet.findByIdAndUpdate(petId, { status: "available" })
 };
 

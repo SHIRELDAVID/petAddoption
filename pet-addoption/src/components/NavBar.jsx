@@ -6,12 +6,25 @@ import Login from "./Login";
 import Signup from "./Signup";
 import ProfileDetails from "./ProfileDetails";
 import AddPet from "./AddPet";
+import { socket } from "../socket"
+
 export default function NavBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [profileDetailsOpen, setProfileDetailsOpen] = useState(false);
   const [addPetOpen, setAddPetOpen] = useState(false);
+
+
+
+  useEffect(() => {
+    if (isLoggedIn && !socket.loggedIn) {
+      socket.loggedIn = true
+      socket.emit("login", localStorage.getItem("token"))
+      socket.on("connect", () => socket.emit("login", localStorage.getItem("token")))
+    }
+  }, [isLoggedIn])
+
 
   useEffect(() => {
     if (localStorage.getItem("token")) {

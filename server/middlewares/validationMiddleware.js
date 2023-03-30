@@ -4,7 +4,7 @@ const signupSchema = joi.object({
   name: joi.string().required().max(20),
   email: joi.string().email().required(),
   password: joi.string().required().min(6).max(24),
-  role: joi.number(),
+  role: joi.any(),
   lastname: joi.string().required(),
 });
 
@@ -17,12 +17,10 @@ const updateUserSchema = joi.object({
   name: joi.string().max(20),
   email: joi.string().email(),
   password: joi.string().min(6).max(24),
-  role: joi.number(),
+  role: joi.any(),
   lastname: joi.string(),
   pets: joi.array(),
-  savedPets: joi.array(),
-  $__: joi.object(),
-  $isNew: joi.boolean()
+  savedPets: joi.array()
 });
 
 const createPetSchema = joi.object({

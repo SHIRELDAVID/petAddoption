@@ -1,40 +1,38 @@
-const { User } = require("../models/User.model");
+const User = require("../services/firebase")
 const sha256 = require("sha256");
 
-const createUser = async ({ name, email, password, lastname, phone, role }) => {
+const createUser = async ({ name, email, password, lastname, role }) => {
 
   //password hashing
   hashedPassword = sha256(password);
 
   //create the user
-  const user = new User({
+  const user = await User.add({
     name,
     email,
     password: hashedPassword,
     lastname,
-    phone,
-    role: role || 1,
-  });
-
-  user.save();
+    role: role || "1",
+    pets: [],
+    savedPets: []
+  })
   return user;
 };
 
 const getUserById = async (userId) => {
-  const user = await User.findById(userId);
-
-  return user;
+  const users = await getUsers()
+  return users.filter(user => user._id === userId)
 };
 
 const updateUser = async (user) => {
   //hash the new password
-  const updatedUser = await User.findByIdAndUpdate(user._id, {
-    ...user,
-    password: user.password ? sha256(user.password) : undefined,
-  });
-
-
-  return { ...updatedUser?._doc, ...user, password: user.password ? sha256(user.password) : undefined, __v: undefined, $__: undefined, $isNew: undefined };
+  if (user.password) user = { ...user, password: sha256(user.password) }
+  const selectedUser = User.doc(user._id)
+  selectedUser.update({
+    ...user
+  })
+  const updatedUser = await getUserById(user._id)
+  return updatedUser[0];
 };
 
 const deleteUser = async (id) => {
@@ -44,33 +42,35 @@ const deleteUser = async (id) => {
 };
 
 const getUsers = async () => {
-  const users = await User.find();
-
+  const res = await User.get()
+  let users = []
+  res.forEach(doc => {
+    users.push({ ...doc.data(), _id: doc.id })
+  })
   return users;
 };
 
 const getUserByName = async (name) => {
-  const user = await User.find({ name });
-
-  return user;
+  const users = await getUsers()
+  return users.filter(user => user.name === name)
 };
 
 const getUserByEmail = async (email) => {
-  const user = await User.find({ email });
+  const users = await getUsers()
+  return users.filter(user => user.email === email)
 
-  return user;
 };
 
 const addPetToUser = async (userId, petId) => {
   console.log("userId", userId);
-  const user = await getUserById(userId);
+  const user = await getUserById(userId)[0]
   console.log("user", user);
 
   return updateUser({ ...user, pets: [...user.pets, petId] });
 };
 
 const removePetFromUser = async (userId, petId) => {
-  const user = await getUserById({ userId })[0];
+  const user = await getUserById(userId)[0];
   const pets = user.pets;
 
   const newPets = pets.filter((pet) => pet != petId);
@@ -79,15 +79,15 @@ const removePetFromUser = async (userId, petId) => {
 };
 
 const saveForLater = async (userId, petId) => {
-  console.log(userId)
   const user = await getUserById(userId);
-  const savedPets = user.savedPets;
+  console.log(user[0])
+  const savedPets = user[0].savedPets;
 
-  await User.findByIdAndUpdate(userId, { savedPets: [...savedPets, petId] })
+  await updateUser({ _id: user[0]._id, savedPets: [...savedPets, petId] })
 };
 
 const unsaveForLater = async (userId, petId) => {
-  const user = await getUserById(userId);
+  const user = await getUserById(userId)[0];
 
   const savedPets = user.savedPets;
 
